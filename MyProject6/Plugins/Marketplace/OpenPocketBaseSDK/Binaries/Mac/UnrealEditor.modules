@@ -1,0 +1,10 @@
+{
+	"BuildId": "55116800",
+	"Modules": 
+	{
+		"OpenPocketBaseSDK": "libUnrealEditor-OpenPocketBaseSDK.dylib",
+		"OpenPocketBaseSDKAdmin": "libUnrealEditor-OpenPocketBaseSDKAdmin.dylib",
+		"OpenPocketBaseSDKEditor": "libUnrealEditor-OpenPocketBaseSDKEditor.dylib",
+		"OpenPocketBaseSDKOffline": "libUnrealEditor-OpenPocketBaseSDKOffline.dylib"
+	}
+}

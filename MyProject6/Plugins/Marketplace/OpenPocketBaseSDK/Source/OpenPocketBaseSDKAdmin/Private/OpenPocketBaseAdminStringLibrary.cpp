@@ -1,0 +1,56 @@
+// Copyright 2026 Ishtmeet Singh.
+
+#include "OpenPocketBaseAdminStringLibrary.h"
+
+#include "OpenPocketBaseStringLibrary.h"
+
+FString UOpenPocketBaseAdminStringLibrary::Conv_OpenPocketBaseAdminTestCredentialsToString(
+    const FOpenPocketBaseAdminTestCredentials& Value)
+{
+    return FString::Printf(
+        TEXT("Open PocketBase Admin Test Credentials\n{\n    \"baseUrl\": \"%s\",\n    \"identity\": \"<redacted>\",\n    \"password\": \"<redacted>\"\n}"),
+        *Value.BaseUrl);
+}
+
+#define OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(Suffix, Type) \
+    FString UOpenPocketBaseAdminStringLibrary::Conv_##Suffix##ToString(const Type& Value) \
+    { \
+        return UOpenPocketBaseStringLibrary::FormatStruct(Type::StaticStruct(), &Value); \
+    }
+
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminBackup, FOpenPocketBaseAdminBackup)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminBackupDownload, FOpenPocketBaseAdminBackupDownload)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminBackupList, FOpenPocketBaseAdminBackupList)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminDocument, FOpenPocketBaseAdminDocument)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminDocumentList, FOpenPocketBaseAdminDocumentList)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminIdentity, FOpenPocketBaseAdminIdentity)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminCollectionFilter, FOpenPocketBaseAdminCollectionFilter)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminCollectionSort, FOpenPocketBaseAdminCollectionSort)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminCollectionListOptions, FOpenPocketBaseAdminCollectionListOptions)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminLogFilter, FOpenPocketBaseAdminLogFilter)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminLogSort, FOpenPocketBaseAdminLogSort)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminLogListOptions, FOpenPocketBaseAdminLogListOptions)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseDynamicAdminListOptions, FOpenPocketBaseDynamicAdminListOptions)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminPage, FOpenPocketBaseAdminPage)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminPolicy, FOpenPocketBaseAdminPolicy)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminSqlColumn, FOpenPocketBaseAdminSqlColumn)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING(OpenPocketBaseAdminSqlResult, FOpenPocketBaseAdminSqlResult)
+
+#undef OPENPOCKETBASE_IMPLEMENT_ADMIN_STRUCT_STRING
+
+#define OPENPOCKETBASE_IMPLEMENT_ADMIN_ENUM_STRING(Suffix, Type) \
+    FString UOpenPocketBaseAdminStringLibrary::Conv_##Suffix##ToString(Type Value) \
+    { \
+        return UOpenPocketBaseStringLibrary::FormatEnum(StaticEnum<Type>(), static_cast<int64>(Value)); \
+    }
+
+OPENPOCKETBASE_IMPLEMENT_ADMIN_ENUM_STRING(OpenPocketBaseAdminCollectionTextField, EOpenPocketBaseAdminCollectionTextField)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_ENUM_STRING(OpenPocketBaseAdminCollectionDateField, EOpenPocketBaseAdminCollectionDateField)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_ENUM_STRING(OpenPocketBaseAdminCollectionSortField, EOpenPocketBaseAdminCollectionSortField)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_ENUM_STRING(OpenPocketBaseAdminCollectionProjectionField, EOpenPocketBaseAdminCollectionProjectionField)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_ENUM_STRING(OpenPocketBaseAdminLogTextField, EOpenPocketBaseAdminLogTextField)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_ENUM_STRING(OpenPocketBaseAdminLogDateField, EOpenPocketBaseAdminLogDateField)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_ENUM_STRING(OpenPocketBaseAdminLogSortField, EOpenPocketBaseAdminLogSortField)
+OPENPOCKETBASE_IMPLEMENT_ADMIN_ENUM_STRING(OpenPocketBaseAdminLogProjectionField, EOpenPocketBaseAdminLogProjectionField)
+
+#undef OPENPOCKETBASE_IMPLEMENT_ADMIN_ENUM_STRING

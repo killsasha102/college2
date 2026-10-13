@@ -1,0 +1,461 @@
+// Copyright 2026 Ishtmeet Singh.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "JsonObjectConverter.h"
+#include "JsonObjectWrapper.h"
+#include "OpenPocketBaseError.h"
+#include "OpenPocketBaseFilter.h"
+#include "OpenPocketBaseJsonValue.h"
+#include "OpenPocketBaseQuery.h"
+#include "OpenPocketBaseSchema.h"
+
+#include "OpenPocketBaseRecord.generated.h"
+
+UENUM(BlueprintType)
+enum class EOpenPocketBaseFieldState : uint8
+{
+    Found,
+    Missing,
+    Null,
+    WrongType,
+    WrongCollection
+};
+
+UENUM(BlueprintType)
+enum class EOpenPocketBaseFieldModifier : uint8
+{
+    Replace,
+    Append,
+    Prepend,
+    Remove
+};
+
+struct FOpenPocketBaseRecord;
+
+USTRUCT(BlueprintType)
+struct OPENPOCKETBASESDK_API FOpenPocketBaseSelectValues
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records")
+    TArray<FString> Values;
+};
+
+USTRUCT(BlueprintType)
+struct OPENPOCKETBASESDK_API FOpenPocketBaseGeoPoint
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records")
+    double Latitude = 0.0;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records")
+    double Longitude = 0.0;
+
+    bool IsValid() const;
+};
+
+USTRUCT(BlueprintType)
+struct OPENPOCKETBASESDK_API FOpenPocketBaseRecordBody
+{
+    GENERATED_BODY()
+
+    FOpenPocketBaseRecordBody();
+    FOpenPocketBaseRecordBody(const FOpenPocketBaseRecordBody& Other);
+    FOpenPocketBaseRecordBody& operator=(const FOpenPocketBaseRecordBody& Other);
+    FOpenPocketBaseRecordBody(FOpenPocketBaseRecordBody&& Other) = default;
+    FOpenPocketBaseRecordBody& operator=(FOpenPocketBaseRecordBody&& Other) = default;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    FJsonObjectWrapper Data;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    bool bValid = true;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    FString ErrorMessage;
+
+    UPROPERTY(Transient)
+    FGuid SchemaId;
+
+    UPROPERTY(Transient)
+    FString CollectionId;
+
+    FOpenPocketBaseRecordBody& SetStringField(
+        const FOpenPocketBaseTextFieldRef& Field,
+        const FString& Value,
+        EOpenPocketBaseFieldModifier Modifier = EOpenPocketBaseFieldModifier::Replace);
+
+    FOpenPocketBaseRecordBody& SetNumberField(
+        const FOpenPocketBaseNumberFieldRef& Field,
+        double Value,
+        EOpenPocketBaseFieldModifier Modifier = EOpenPocketBaseFieldModifier::Replace);
+
+    FOpenPocketBaseRecordBody& SetBooleanField(
+        const FOpenPocketBaseBooleanFieldRef& Field,
+        bool bValue,
+        EOpenPocketBaseFieldModifier Modifier = EOpenPocketBaseFieldModifier::Replace);
+
+    FOpenPocketBaseRecordBody& SetNullField(
+        const FOpenPocketBaseFieldRef& Field,
+        EOpenPocketBaseFieldModifier Modifier = EOpenPocketBaseFieldModifier::Replace);
+
+    FOpenPocketBaseRecordBody& SetStringArrayField(
+        const FOpenPocketBaseStringArrayFieldRef& Field,
+        const TArray<FString>& Value,
+        EOpenPocketBaseFieldModifier Modifier = EOpenPocketBaseFieldModifier::Replace);
+    FOpenPocketBaseRecordBody& RemoveFiles(
+        const FOpenPocketBaseFileFieldRef& Field,
+        const TArray<FString>& FileNames);
+
+    FOpenPocketBaseRecordBody& SetDateField(
+        const FOpenPocketBaseDateFieldRef& Field,
+        const FDateTime& Value);
+    FOpenPocketBaseRecordBody& SetJsonField(
+        const FOpenPocketBaseJsonFieldRef& Field,
+        const FOpenPocketBaseJsonValue& Value);
+    FOpenPocketBaseRecordBody& SetGeoPointField(
+        const FOpenPocketBaseGeoPointFieldRef& Field,
+        const FOpenPocketBaseGeoPoint& Value);
+    FOpenPocketBaseRecordBody& SetSingleSelectField(
+        const FOpenPocketBaseSingleSelectFieldRef& Field,
+        const FString& Value);
+    FOpenPocketBaseRecordBody& SetMultipleSelectField(
+        const FOpenPocketBaseMultipleSelectFieldRef& Field,
+        const TArray<FString>& Value,
+        EOpenPocketBaseFieldModifier Modifier = EOpenPocketBaseFieldModifier::Replace);
+    FOpenPocketBaseRecordBody& SetSingleRelationField(
+        const FOpenPocketBaseSingleRelationFieldRef& Field,
+        const FString& RecordId);
+    FOpenPocketBaseRecordBody& SetMultipleRelationField(
+        const FOpenPocketBaseMultipleRelationFieldRef& Field,
+        const TArray<FString>& RecordIds,
+        EOpenPocketBaseFieldModifier Modifier = EOpenPocketBaseFieldModifier::Replace);
+    FOpenPocketBaseRecordBody& SetSingleRelationRecord(
+        const FOpenPocketBaseSingleRelationFieldRef& Field,
+        const FOpenPocketBaseRecord& Record);
+    FOpenPocketBaseRecordBody& SetMultipleRelationRecords(
+        const FOpenPocketBaseMultipleRelationFieldRef& Field,
+        const TArray<FOpenPocketBaseRecord>& Records,
+        EOpenPocketBaseFieldModifier Modifier = EOpenPocketBaseFieldModifier::Replace);
+
+    FOpenPocketBaseRecordBody& SetDynamicStringField(
+        const FString& FieldName,
+        const FString& Value,
+        EOpenPocketBaseFieldModifier Modifier = EOpenPocketBaseFieldModifier::Replace);
+    FOpenPocketBaseRecordBody& SetDynamicNumberField(
+        const FString& FieldName,
+        double Value,
+        EOpenPocketBaseFieldModifier Modifier = EOpenPocketBaseFieldModifier::Replace);
+    FOpenPocketBaseRecordBody& SetDynamicBooleanField(
+        const FString& FieldName,
+        bool bValue,
+        EOpenPocketBaseFieldModifier Modifier = EOpenPocketBaseFieldModifier::Replace);
+    FOpenPocketBaseRecordBody& SetDynamicNullField(
+        const FString& FieldName,
+        EOpenPocketBaseFieldModifier Modifier = EOpenPocketBaseFieldModifier::Replace);
+    FOpenPocketBaseRecordBody& SetDynamicStringArrayField(
+        const FString& FieldName,
+        const TArray<FString>& Value,
+        EOpenPocketBaseFieldModifier Modifier = EOpenPocketBaseFieldModifier::Replace);
+    FOpenPocketBaseRecordBody& RemoveDynamicFiles(
+        const FString& FieldName,
+        const TArray<FString>& FileNames);
+    FOpenPocketBaseRecordBody& SetDynamicDateField(
+        const FString& FieldName,
+        const FDateTime& Value);
+    FOpenPocketBaseRecordBody& SetDynamicJsonField(
+        const FString& FieldName,
+        const FOpenPocketBaseJsonValue& Value);
+    FOpenPocketBaseRecordBody& SetDynamicGeoPointField(
+        const FString& FieldName,
+        const FOpenPocketBaseGeoPoint& Value);
+
+    bool IsValid() const;
+    bool BelongsTo(const FOpenPocketBaseCollectionRef& Collection) const;
+
+    static FString MakeModifiedFieldName(
+        const FString& FieldName,
+        EOpenPocketBaseFieldModifier Modifier);
+
+private:
+    bool AcceptField(
+        const FOpenPocketBaseFieldRef& Field,
+        FOpenPocketBaseFieldRef& OutCurrentField);
+};
+
+USTRUCT(BlueprintType)
+struct OPENPOCKETBASESDK_API FOpenPocketBaseRecord
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    FString Id;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    FString CollectionId;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    FString CollectionName;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    FDateTime Created;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    FDateTime Updated;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    FJsonObjectWrapper Data;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    FJsonObjectWrapper Expanded;
+
+    template <typename StructType>
+    bool TryConvertToStruct(StructType& OutStruct, FOpenPocketBaseError& OutError) const
+    {
+        if (!Data.JsonObject.IsValid())
+        {
+            OutError = FOpenPocketBaseError();
+            OutError.Kind = EOpenPocketBaseErrorKind::Serialization;
+            OutError.Message = FString::Printf(
+                TEXT("Record '%s' from collection '%s' has no parsed Data object. Fetch the record again before converting it to a struct."),
+                *Id,
+                *CollectionName);
+            return false;
+        }
+
+        FText FailureReason;
+        if (!FJsonObjectConverter::JsonObjectToUStruct(
+                Data.JsonObject.ToSharedRef(),
+                &OutStruct,
+                0,
+                0,
+                false,
+                &FailureReason))
+        {
+            OutError = FOpenPocketBaseError();
+            OutError.Kind = EOpenPocketBaseErrorKind::Serialization;
+            OutError.Message = FString::Printf(
+                TEXT("Record '%s' from collection '%s' could not be converted to the requested struct. %s"),
+                *Id,
+                *CollectionName,
+                *FailureReason.ToString());
+            return false;
+        }
+
+        OutError = FOpenPocketBaseError();
+        return true;
+    }
+};
+
+USTRUCT(BlueprintType)
+struct OPENPOCKETBASESDK_API FOpenPocketBaseRequestOptions
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Client", meta = (ClampMin = "0.0"))
+    double TotalTimeoutSeconds = 30.0;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Client", meta = (ClampMin = "0.0"))
+    double ActivityTimeoutSeconds = 15.0;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Client", AdvancedDisplay)
+    FString RequestKey;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Client", AdvancedDisplay)
+    bool bCancelPreviousRequestWithSameKey = false;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Client", AdvancedDisplay)
+    TMap<FString, FString> AdditionalHeaders;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Client", AdvancedDisplay)
+    FString TraceParent;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Client", AdvancedDisplay)
+    bool bRetryEligibleReads = true;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Client", AdvancedDisplay, meta = (ClampMin = "0", ClampMax = "5"))
+    int32 MaxReadRetries = 2;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Client", AdvancedDisplay, meta = (ClampMin = "0.0", ClampMax = "30.0"))
+    double RetryBaseDelaySeconds = 0.25;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Client", AdvancedDisplay, meta = (ClampMin = "0.0", ClampMax = "60.0"))
+    double RetryMaxDelaySeconds = 2.0;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Client", AdvancedDisplay, meta = (ClampMin = "0.0", ClampMax = "1.0"))
+    double RetryJitterFraction = 0.2;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Client", AdvancedDisplay, meta = (ClampMin = "1024", ClampMax = "67108864"))
+    int64 MaxResponseBytes = 8 * 1024 * 1024;
+};
+
+USTRUCT(
+    BlueprintType,
+    meta = (HasNativeMake = "/Script/OpenPocketBaseSDK.OpenPocketBaseRecordLibrary.NewRecordOptions"))
+struct OPENPOCKETBASESDK_API FOpenPocketBaseRecordOptions
+{
+    GENERATED_BODY()
+
+    FOpenPocketBaseRecordOptions() = default;
+
+    FOpenPocketBaseRecordOptions(FOpenPocketBaseRequestOptions InRequestOptions)
+        : RequestOptions(MoveTemp(InRequestOptions))
+    {
+    }
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records")
+    TArray<FOpenPocketBaseExpand> Expand;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records")
+    TArray<FOpenPocketBaseFieldSelection> Fields;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records")
+    FOpenPocketBaseRequestOptions RequestOptions;
+
+    FOpenPocketBaseRecordOptions& WithExpand(TArray<FOpenPocketBaseExpand> InExpand);
+    FOpenPocketBaseRecordOptions& WithFields(TArray<FOpenPocketBaseFieldSelection> InFields);
+    FOpenPocketBaseRecordOptions& Including(FOpenPocketBaseExpand InExpand);
+    FOpenPocketBaseRecordOptions& Selecting(FOpenPocketBaseFieldSelection InField);
+    FOpenPocketBaseRecordOptions& WithRequestOptions(FOpenPocketBaseRequestOptions InOptions);
+    bool IsValid() const;
+    bool BelongsTo(const FOpenPocketBaseCollectionRef& Collection) const;
+};
+
+USTRUCT(
+    BlueprintType,
+    meta = (HasNativeMake = "/Script/OpenPocketBaseSDK.OpenPocketBaseRecordLibrary.NewListOptions"))
+struct OPENPOCKETBASESDK_API FOpenPocketBaseListOptions
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records", meta = (ClampMin = "1"))
+    int32 Page = 1;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records", meta = (ClampMin = "1"))
+    int32 PerPage = 30;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records")
+    FOpenPocketBaseFilter Filter;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records")
+    TArray<FOpenPocketBaseSort> Sort;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records")
+    TArray<FOpenPocketBaseExpand> Expand;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records")
+    TArray<FOpenPocketBaseFieldSelection> Fields;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records", AdvancedDisplay)
+    bool bSkipTotal = false;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records")
+    FOpenPocketBaseRequestOptions RequestOptions;
+
+    FOpenPocketBaseListOptions& AtPage(int32 InPage);
+    FOpenPocketBaseListOptions& PageSize(int32 InPerPage);
+    FOpenPocketBaseListOptions& Where(FOpenPocketBaseFilter InFilter);
+    FOpenPocketBaseListOptions& WithSort(TArray<FOpenPocketBaseSort> InSort);
+    FOpenPocketBaseListOptions& WithExpand(TArray<FOpenPocketBaseExpand> InExpand);
+    FOpenPocketBaseListOptions& WithFields(TArray<FOpenPocketBaseFieldSelection> InFields);
+    FOpenPocketBaseListOptions& OrderedBy(FOpenPocketBaseSort InSort);
+    FOpenPocketBaseListOptions& Including(FOpenPocketBaseExpand InExpand);
+    FOpenPocketBaseListOptions& Selecting(FOpenPocketBaseFieldSelection InField);
+    FOpenPocketBaseListOptions& SkipTotals(bool bInSkipTotal = true);
+    FOpenPocketBaseListOptions& WithRequestOptions(FOpenPocketBaseRequestOptions InOptions);
+    bool IsValid() const;
+    bool BelongsTo(const FOpenPocketBaseCollectionRef& Collection) const;
+};
+
+USTRUCT(
+    BlueprintType,
+    meta = (HasNativeMake = "/Script/OpenPocketBaseSDK.OpenPocketBaseRecordLibrary.NewFullListOptions"))
+struct OPENPOCKETBASESDK_API FOpenPocketBaseFullListOptions
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records")
+    FOpenPocketBaseListOptions ListOptions;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records", meta = (ClampMin = "0", ClampMax = "1000000"))
+    int32 MaxItems = 1000;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open PocketBase|Records", meta = (ClampMin = "0", ClampMax = "10000"))
+    int32 MaxPages = 0;
+
+    FOpenPocketBaseFullListOptions& WithListOptions(FOpenPocketBaseListOptions InOptions);
+    FOpenPocketBaseFullListOptions& LimitItems(int32 InMaxItems);
+    FOpenPocketBaseFullListOptions& LimitPages(int32 InMaxPages);
+};
+
+USTRUCT(
+    BlueprintType,
+    meta = (HasNativeBreak = "/Script/OpenPocketBaseSDK.OpenPocketBaseRecordLibrary.BreakRecordPage"))
+struct OPENPOCKETBASESDK_API FOpenPocketBaseRecordPage
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    int32 Page = 1;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    int32 PerPage = 0;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    TArray<FOpenPocketBaseRecord> Items;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    bool bHasTotalItems = false;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    int64 TotalItems = 0;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    bool bHasTotalPages = false;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    int32 TotalPages = 0;
+
+    TOptional<int64> GetOptionalTotalItems() const
+    {
+        return bHasTotalItems ? TOptional<int64>(TotalItems) : TOptional<int64>();
+    }
+
+    TOptional<int32> GetOptionalTotalPages() const
+    {
+        return bHasTotalPages ? TOptional<int32>(TotalPages) : TOptional<int32>();
+    }
+};
+
+USTRUCT(BlueprintType)
+struct OPENPOCKETBASESDK_API FOpenPocketBaseFullListResult
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    TArray<FOpenPocketBaseRecord> Items;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    int32 PagesFetched = 0;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    bool bReachedEnd = false;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    bool bReachedItemLimit = false;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Records")
+    bool bReachedPageLimit = false;
+};
+
+USTRUCT(BlueprintType)
+struct OPENPOCKETBASESDK_API FOpenPocketBaseAuthResult
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "Open PocketBase|Authentication")
+    FOpenPocketBaseRecord Record;
+};
